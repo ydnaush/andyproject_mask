@@ -1,0 +1,65 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+
+<!DOCTYPE html>
+<html lang="zh-tw">
+
+<head>
+    <title>andyhouseIOT_mask(口罩地圖)</title>
+    <!-- Meta tag Keywords -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8" />
+    <!-- Custom-Files -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css">
+    <!-- Bootstrap-Core-CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.css" type="text/css" rel="stylesheet">
+    <!-- banner slider -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/MarkerCluster.Default.css" type="text/css">
+    <link rel="stylesheet" href="css/mask.css" type="text/css" />
+</head>
+
+<body>
+    <div id="map"></div>
+</body>
+<!--基本口罩地圖顯示 start -->
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.4.1/leaflet.markercluster.js"></script>
+</script>
+<script>
+    var map = L.map('map', {
+        center: [22.604799, 120.2976256],
+        zoom: 10
+    });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    var greenIcon = new L.Icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    var markers = new L.MarkerClusterGroup().addTo(map);
+    var xhr = new XMLHttpRequest();
+    xhr.open('get', 'https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json');
+    xhr.send(null);
+    xhr.onload = function () {
+        var data = JSON.parse(xhr.responseText).features;
+        console.log(data.length);
+        for (i = 0; i < data.length; i++) {
+            markers.addLayer(L.marker([data[i].geometry.coordinates[1], data[i].geometry.coordinates[0]], { icon: greenIcon }).bindPopup(data[i].properties.name).addTo(map));
+        }
+        map.addLayer(markers);
+        console.log(data[0].properties.name);
+        console.log(data[0].geometry.coordinates);
+    };
+</script>
+<!--基本口罩地圖顯示 end -->
+</html>
